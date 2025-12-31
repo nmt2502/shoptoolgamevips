@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>SHOPTOOLGAMEVIP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <script>
+        // Kiểm tra đăng nhập
+        if(!localStorage.getItem('user')) {
+             window.location.href = 'index.html'; 
+        }
+        // Anti-Console
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="muakeyweb.css">
+</head>
+<body class="pb-20 overflow-x-hidden">
+
+    <div id="ptr-loader">
+        <div class="ptr-content">
+            <i class="fas fa-arrow-down ptr-icon" id="ptr-icon"></i>
+            <div class="ptr-spinner" id="ptr-spinner"></div>
+        </div>
+    </div>
+    <div class="animated-bg" id="animated-bg"></div>
+
+    <header class="fixed top-0 w-full z-40 header-main">
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='home.html'" class="active:scale-90 transition p-2 rounded-lg">
+                    <i class="fa-solid fa-arrow-left text-xl text-pink-300"></i>
+                </button>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-white font-rajdhani">MUA KEY</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="text-xs text-pink-300 uppercase font-rajdhani tracking-wider">Nâng cấp tài khoản</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="showSupport()" class="active:scale-90 transition p-2 rounded-lg bg-gradient-to-r from-pink-900/30 to-orange-900/30" aria-label="Hỗ trợ">
+                <i class="fa-solid fa-headset text-xl text-pink-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-24 px-4 max-w-6xl mx-auto relative z-10">
+        <div class="balance-card p-6 mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-2 font-rajdhani"><i class="fas fa-wallet text-pink-400 mr-2"></i> SỐ DƯ TÀI KHOẢN</h3>
+                    <p class="text-sm text-gray-300">Số dư hiện có để mua key VIP</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <div class="text-3xl md:text-4xl font-bold text-white mb-1 font-rajdhani flex items-center justify-center md:justify-end gap-2">
+                        <span id="user-balance">0</span> <span class="text-lg">VND</span>
+                        <button onclick="refreshBalance(this)" class="ml-2 text-pink-400 hover:text-white transition p-1" title="Tải lại số dư">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-pink-300"><i class="fas fa-sync-alt mr-1"></i> <a href="naptienweb.html" class="hover:text-pink-400 underline">Nạp thêm tiền ngay</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 font-rajdhani"><span class="neon-text">MUA KEY</span> <span class="neon-text-blue"></span></h2>
+            <p class="text-pink-300 text-lg mb-6 font-rajdhani">Chọn gói key phù hợp để nâng cấp tài khoản</p>
+        </div>
+
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-white mb-6 font-rajdhani text-center"><i class="fas fa-crown text-yellow-400 mr-3"></i> BẢNG GIÁ KEY</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="key-card p-6 text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-gray-500 to-gray-700 flex items-center justify-center mb-4"><i class="fas fa-clock text-2xl text-white"></i></div>
+                    <div class="duration-badge inline-block mb-3">1 NGÀY</div>
+                    <h4 class="font-bold text-xl text-white mb-2">GÓI TRẢI NGHIỆM</h4>
+                    <div class="price-tag mb-4">35.000 đ</div>
+                    <ul class="feature-list text-sm text-gray-300 mb-6 text-left">
+                        <li><i class="fas fa-check"></i> Sử dụng trong 24h</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 8 nền tảng</li>
+                        <li><i class="fas fa-check"></i> Độ chính xác 72%</li>
+                        <li><i class="fas fa-times text-red-400"></i> <span class="text-gray-400">Không hỗ trợ 24/7</span></li>
+                    </ul>
+                    <button onclick="openPurchaseModal('1day', 35000)" class="btn-core btn-secondary w-full"><i class="fas fa-shopping-cart"></i> MUA NGAY</button>
+                </div>
+                
+                <div class="key-card p-6 text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-4"><i class="fas fa-calendar-day text-2xl text-white"></i></div>
+                    <div class="duration-badge inline-block mb-3">3 NGÀY</div>
+                    <h4 class="font-bold text-xl text-white mb-2">GÓI CƠ BẢN</h4>
+                    <div class="price-tag mb-4">50.000 đ</div>
+                    <ul class="feature-list text-sm text-gray-300 mb-6 text-left">
+                        <li><i class="fas fa-check"></i> Sử dụng 3 ngày</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 8 nền tảng</li>
+                        <li><i class="fas fa-check"></i> Độ chính xác 72%</li>
+                    </ul>
+                    <button onclick="openPurchaseModal('3days', 50000)" class="btn-core btn-secondary w-full"><i class="fas fa-shopping-cart"></i> MUA NGAY</button>
+                </div>
+                
+                <div class="key-card popular p-6 text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center mb-4"><i class="fas fa-star text-2xl text-white"></i></div>
+                    <div class="duration-badge inline-block mb-3">1 TUẦN</div>
+                    <h4 class="font-bold text-xl text-white mb-2">GÓI PHỔ BIẾN</h4>
+                    <div class="price-tag mb-4">75.000 đ</div>
+                    <ul class="feature-list text-sm text-gray-300 mb-6 text-left">
+                        <li><i class="fas fa-check"></i> Sử dụng 7 ngày</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 8 nền tảng</li>
+                        <li><i class="fas fa-check"></i> Độ chính xác 72%</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 24/7</li>
+                    </ul>
+                    <button onclick="openPurchaseModal('1week', 75000)" class="btn-core btn-primary w-full"><i class="fas fa-crown"></i> MUA NGAY</button>
+                </div>
+                
+                <div class="key-card p-6 text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mb-4"><i class="fas fa-calendar-alt text-2xl text-white"></i></div>
+                    <div class="duration-badge inline-block mb-3">1 THÁNG</div>
+                    <h4 class="font-bold text-xl text-white mb-2">GÓI CAO CẤP</h4>
+                    <div class="price-tag mb-4">110.000 đ</div>
+                    <ul class="feature-list text-sm text-gray-300 mb-6 text-left">
+                        <li><i class="fas fa-check"></i> Sử dụng 30 ngày</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 8 nền tảng</li>
+                        <li><i class="fas fa-check"></i> Hỗ trợ 24/7 </li>
+                    </ul>
+                    <button onclick="openPurchaseModal('1month', 110000)" class="btn-core btn-primary w-full"><i class="fas fa-gem"></i> MUA NGAY</button>
+                </div>
+            </div>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="key-card p-8 text-center border-2 border-yellow-500/50">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center mb-6"><i class="fas fa-infinity text-3xl text-white"></i></div>
+                    <div class="duration-badge inline-block mb-3 bg-yellow-500/20 border-yellow-500 text-yellow-300">VĨNH VIỄN</div>
+                    <h4 class="font-bold text-2xl text-white mb-3">GÓI VĨNH VIỄN</h4>
+                    <div class="price-tag text-3xl mb-6">145.000 đ</div>
+                    <ul class="feature-list text-sm text-gray-300 mb-8 text-left max-w-md mx-auto">
+                        <li><i class="fas fa-check text-yellow-400"></i> <span class="text-white">Sử dụng vĩnh viễn</span></li>
+                        <li><i class="fas fa-check text-yellow-400"></i> <span class="text-white">Full tính năng + Update trọn đời</span></li>
+                    </ul>
+                    <button onclick="openPurchaseModal('lifetime', 145000)" class="btn-core btn-primary px-8 py-4 text-lg"><i class="fas fa-rocket"></i> MUA NGAY GÓI VĨNH VIỄN</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-box p-6 mb-8">
+            <h3 class="text-xl font-bold text-white mb-6 font-rajdhani text-center"><i class="fas fa-question-circle text-blue-400 mr-3"></i> CÂU HỎI THƯỜNG GẶP</h3>
+            <div class="space-y-4">
+                <div class="bg-gray-900/30 p-4 rounded-xl"><h4 class="font-bold text-white mb-2">Key  có thời hạn bao lâu?</h4><p class="text-sm text-gray-400">Key có các gói thời hạn: 1 ngày, 3 ngày, 1 tuần, 1 tháng và vĩnh viễn. Thời hạn tính từ lúc kích hoạt.</p></div>
+                <div class="bg-gray-900/30 p-4 rounded-xl"><h4 class="font-bold text-white mb-2">Làm sao để nhận key?</h4><p class="text-sm text-gray-400">Key sẽ hiển thị ngay lập tức sau khi thanh toán thành công và được lưu vào lịch sử.</p></div>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <button onclick="window.location.href='home.html'" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gray-900/50 text-gray-300 hover:bg-gray-800 transition"><i class="fas fa-arrow-left"></i> QUAY LẠI TRANG CHỦ</button>
+        </div>
+    </main>
+
+    <div id="purchase-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closePurchaseModal()"></div>
+        <div class="relative summary-modal modal-box rounded-2xl mx-4 summary-content">
+            <button onclick="closePurchaseModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white p-2 rounded-full hover:bg-pink-900/30 z-10"><i class="fa-solid fa-times text-xl"></i></button>
+            <div class="p-4 sm:p-6">
+                <div class="text-center mb-4 sm:mb-6"><h3 class="text-xl sm:text-2xl font-extrabold text-white font-rajdhani border-b border-pink-500/30 pb-3"><i class="fas fa-file-invoice text-pink-400 mr-2"></i> THÔNG TIN ĐƠN HÀNG</h3></div>
+                
+                <div id="modal-content-details" class="space-y-4">
+                    <div class="bg-gradient-to-r from-pink-900/20 to-orange-900/20 p-4 sm:p-5 rounded-xl">
+                        <h4 class="font-bold text-white mb-3 flex items-center text-sm sm:text-base"><i class="fas fa-box-open mr-2 text-pink-300"></i> Chi tiết gói Key</h4>
+                        <div class="space-y-2 text-xs sm:text-sm">
+                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-300">Tên gói:</span><span id="modal-package-name" class="text-white font-bold">-</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-300">Thời hạn:</span><span id="modal-package-duration" class="text-pink-300 font-bold">-</span></div>
+                            <div class="flex justify-between"><span class="text-gray-300">Giá gốc:</span><span id="modal-package-price" class="text-white font-bold">0 VND</span></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900/50 p-4 rounded-xl">
+                        <h4 class="font-bold text-white mb-2 flex items-center text-sm sm:text-base"><i class="fas fa-tag mr-2 text-yellow-300"></i> Mã giảm giá</h4>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="discount-code-input" placeholder="Nhập mã giảm giá..." class="flex-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 uppercase text-sm">
+                            <button onclick="applyDiscount()" id="apply-discount-btn" class="btn-core btn-secondary px-4 py-3 text-xs w-full sm:w-24">ÁP DỤNG</button>
+                        </div>
+                        <p id="discount-message" class="text-xs mt-2 text-gray-400 italic"></p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-900/20 to-teal-900/20 p-4 sm:p-5 rounded-xl">
+                        <h4 class="font-bold text-white mb-3 flex items-center text-sm sm:text-base"><i class="fas fa-receipt mr-2 text-green-300"></i> Tổng kết</h4>
+                        <div class="space-y-3 text-xs sm:text-sm">
+                            <div class="flex justify-between items-center"><span class="text-gray-300">Thanh toán:</span><span id="final-price" class="text-white font-bold text-sm sm:text-base">0 VND</span></div>
+                            <div class="flex justify-between items-center border-t border-white/10 pt-3"><span class="text-gray-300">Số dư hiện có:</span><span id="summary-current-balance" class="text-blue-300 font-bold text-sm sm:text-base">0 VND</span></div>
+                            <div class="flex justify-between items-center pt-2 border-t border-white/20"><span class="summary-mini-text text-white">Số dư còn lại:</span><span id="remaining-balance" class="summary-mini-price text-green-300">0 VND</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <button onclick="closePurchaseModal()" class="btn-core btn-secondary flex-1 order-2 sm:order-1"><i class="fas fa-arrow-left"></i> QUAY LẠI</button>
+                    <button onclick="processPurchase()" class="btn-core btn-primary flex-1 order-1 sm:order-2" id="confirm-purchase-btn"><i class="fas fa-lock"></i> XÁC NHẬN MUA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CẤU HÌNH API
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxHe9xDk2SXiHhM8A4ElZrkOx5xReGeXrb8BwLl5SBY2XP40gYDZjgISHGfz8yyX8mY/exec';
+
+        let userBalance = 0;
+        let selectedPackageId = null;
+        let originalPrice = 0;
+        let finalPriceAmount = 0;
+        let purchaseDays = 0;
+        let currentDiscountCode = '';
+
+        const packages = {
+            '1day': { name: 'GÓI TRẢI NGHIỆM', duration: '1 NGÀY', price: 35000, days: 1 },
+            '3days': { name: 'GÓI CƠ BẢN', duration: '3 NGÀY', price: 50000, days: 3 },
+            '1week': { name: 'GÓI PHỔ BIẾN', duration: '1 TUẦN', price: 75000, days: 7 },
+            '1month': { name: 'GÓI CAO CẤP', duration: '1 THÁNG', price: 110000, days: 30 },
+            'lifetime': { name: 'GÓI VĨNH VIỄN', duration: 'VĨNH VIỄN', price: 145000, days: 3650 }
+        };
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimatedBg();
+            fetchUserBalance();
+            initPullToRefresh(); 
+        });
+
+        // Pull to Refresh Logic
+        function initPullToRefresh() {
+            const ptrLoader = document.getElementById('ptr-loader');
+            const ptrIcon = document.getElementById('ptr-icon');
+            const ptrSpinner = document.getElementById('ptr-spinner');
+            let startY = 0, isPulling = false, currentY = 0;
+
+            window.addEventListener('touchstart', (e) => {
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].clientY;
+                    isPulling = true;
+                    ptrIcon.style.display = 'block';
+                    ptrSpinner.style.display = 'none';
+                    ptrIcon.style.transform = 'rotate(0deg)';
+                }
+            }, {passive: true});
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                currentY = e.touches[0].clientY;
+                const diff = currentY - startY;
+                if (diff > 0 && window.scrollY === 0) {
+                    const move = Math.min(diff * 0.45, 150); 
+                    ptrLoader.style.top = (move - 70) + 'px'; 
+                    ptrIcon.style.transform = move > 40 ? 'rotate(180deg)' : 'rotate(0deg)';
+                    if(e.cancelable && diff > 10) e.preventDefault(); 
+                } else { isPulling = false; }
+            }, {passive: false});
+
+            window.addEventListener('touchend', (e) => {
+                if (!isPulling) return;
+                isPulling = false;
+                const diff = currentY - startY;
+                const move = diff * 0.45;
+                if (move > 40 && window.scrollY === 0) {
+                    ptrLoader.style.top = '10px';
+                    ptrIcon.style.display = 'none';
+                    ptrSpinner.style.display = 'block';
+                    setTimeout(() => window.location.reload(), 500);
+                } else { ptrLoader.style.top = '-70px'; }
+                startY = 0; currentY = 0;
+            });
+        }
+
+        // Lấy số dư từ Server (Thực)
+        function fetchUserBalance() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(!user) return Promise.reject();
+            
+            return fetch(`${API_URL}?action=getUserInfo&username=${user.username}`)
+            .then(r => r.json())
+            .then(data => {
+                userBalance = parseInt(data.balance);
+                document.getElementById('user-balance').innerText = userBalance.toLocaleString('vi-VN');
+                document.getElementById('summary-current-balance').textContent = userBalance.toLocaleString('vi-VN') + ' VND';
+                
+                // Cập nhật lại localStorage để đồng bộ
+                user.balance = userBalance;
+                localStorage.setItem('user', JSON.stringify(user));
+            });
+        }
+
+        // Hàm cho nút reload (Xoay icon khi load)
+        function refreshBalance(btn) {
+            const icon = btn.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            fetchUserBalance()
+                .catch(() => {
+                    Swal.fire({toast:true, position:'top-end', icon:'error', title:'Lỗi kết nối', showConfirmButton:false, timer:1500, background:'#0f0f1a', color:'white'});
+                })
+                .finally(() => {
+                    setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+                });
+        }
+
+        function formatVND(n) { return Math.round(n).toLocaleString('vi-VN') + ' VND'; }
+        
+        function initializeAnimatedBg() {
+            const container = document.getElementById('animated-bg');
+            for(let i=0; i<20; i++) {
+                let d = document.createElement('div'); d.style.left=Math.random()*100+'vw';
+                d.style.animationDuration=(Math.random()*20+20)+'s'; d.style.animationDelay=-Math.random()*25+'s';
+                container.appendChild(d);
+            }
+        }
+
+        function openPurchaseModal(packageId, price) {
+            selectedPackageId = packageId;
+            originalPrice = price;
+            finalPriceAmount = price;
+            purchaseDays = packages[packageId].days;
+            currentDiscountCode = '';
+            
+            document.getElementById('discount-code-input').value = '';
+            document.getElementById('discount-message').textContent = '';
+            document.getElementById('apply-discount-btn').disabled = false;
+            
+            const pkg = packages[packageId];
+            document.getElementById('modal-package-name').textContent = pkg.name;
+            document.getElementById('modal-package-duration').textContent = pkg.duration;
+            document.getElementById('modal-package-price').textContent = formatVND(originalPrice);
+            
+            updateSummary();
+            document.getElementById('purchase-modal').classList.remove('hidden');
+        }
+
+        function closePurchaseModal() { document.getElementById('purchase-modal').classList.add('hidden'); }
+
+        function updateSummary() {
+            const remaining = userBalance - finalPriceAmount;
+            document.getElementById('final-price').textContent = formatVND(finalPriceAmount);
+            const remEl = document.getElementById('remaining-balance');
+            const btn = document.getElementById('confirm-purchase-btn');
+            
+            remEl.textContent = formatVND(remaining);
+            
+            if (remaining >= 0) {
+                remEl.className = 'summary-mini-price text-green-300';
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-lock"></i> XÁC NHẬN MUA';
+            } else {
+                remEl.className = 'summary-mini-price text-red-300';
+                btn.disabled = true; btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> SỐ DƯ KHÔNG ĐỦ';
+            }
+        }
+
+        // --- CHECK MÃ GIẢM GIÁ (API THỰC) ---
+        function applyDiscount() {
+            const code = document.getElementById('discount-code-input').value.trim().toUpperCase();
+            const msg = document.getElementById('discount-message');
+            const btn = document.getElementById('apply-discount-btn');
+
+            if(!code) return;
+
+            btn.innerHTML = '...'; btn.disabled = true;
+
+            const fd = new FormData();
+            fd.append('action', 'checkDiscount');
+            fd.append('code', code);
+
+            fetch(API_URL, {method:'POST', body:fd})
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    const discountPercent = parseFloat(data.percent); 
+                    const discountAmount = originalPrice * discountPercent;
+                    finalPriceAmount = originalPrice - discountAmount;
+                    currentDiscountCode = code;
+
+                    msg.textContent = `Áp dụng thành công: Giảm ${(discountPercent*100)}%`;
+                    msg.className = 'text-xs mt-2 text-green-400 italic';
+                    btn.disabled = true; 
+                } else {
+                    msg.textContent = 'Mã không hợp lệ hoặc đã hết hạn';
+                    msg.className = 'text-xs mt-2 text-red-400 italic';
+                    btn.disabled = false; btn.innerHTML = 'ÁP DỤNG';
+                }
+                updateSummary();
+            })
+            .catch(() => {
+                msg.textContent = 'Lỗi kết nối kiểm tra mã';
+                btn.disabled = false; btn.innerHTML = 'ÁP DỤNG';
+            });
+        }
+
+        // --- XỬ LÝ MUA (API THỰC) ---
+        function processPurchase() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const btn = document.getElementById('confirm-purchase-btn');
+            
+            btn.innerHTML = 'ĐANG XỬ LÝ...'; btn.disabled = true;
+
+            const ip = 'client'; // Google Apps Script sẽ tự lấy IP thực tế khi nhận request
+
+            const formData = new FormData();
+            formData.append('action', 'buyKey');
+            formData.append('username', user.username);
+            formData.append('price', finalPriceAmount); 
+            formData.append('days', purchaseDays);
+            formData.append('ip', ip);
+            formData.append('discountCode', currentDiscountCode);
+
+            fetch(API_URL, {method:'POST', body:formData})
+            .then(r => r.json())
+            .then(data => {
+                closePurchaseModal();
+                if(data.status === 'success') {
+                    // Update LocalStorage
+                    user.balance = data.balance;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    fetchUserBalance(); // Reload lại số dư hiển thị
+
+                    Swal.fire({
+                        title: 'MUA THÀNH CÔNG!',
+                        html: `
+                            <p class="text-green-400 font-bold text-xl mb-2">Key: ${data.key}</p>
+                            <p class="text-sm text-gray-300">Tài khoản đã được tự động kích hoạt!</p>
+                            <div class="mt-4"><button onclick="copyKey('${data.key}')" class="bg-gray-700 text-white px-3 py-1 rounded text-sm">Sao chép Key</button></div>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'VỀ TRANG CHỦ',
+                        background: '#0f0f1a', color:'white'
+                    }).then(() => window.location.href = 'home.html');
+                } else {
+                    Swal.fire({icon:'error', title:'LỖI', text: data.message, background:'#0f0f1a', color:'white'});
+                }
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-lock"></i> XÁC NHẬN MUA';
+            })
+            .catch((error) => {
+                console.error(error);
+                closePurchaseModal();
+                Swal.fire({icon:'error', title:'LỖI KẾT NỐI', text:'Vui lòng thử lại sau', background:'#0f0f1a', color:'white'});
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-lock"></i> XÁC NHẬN MUA';
+            });
+        }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'Đã sao chép!', showConfirmButton:false, timer:1500, background:'#0f0f1a', color:'white'});
+        }
+
+        function showSupport() {
+            Swal.fire({icon:'info', title:'HỖ TRỢ', html:'Liên hệ Telegram: <a href="https://t.me/maicutevip11" class="text-blue-400">@maicutevip11</a>', background:'#0f0f1a', color:'white'});
+        }
+    </script>
+</body>
+</html>

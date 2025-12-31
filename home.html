@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>SHOPTOOLGAMEVIP - FULL GAMES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <script>
+        // 1. Kiểm tra user
+        if(!localStorage.getItem('user')) {
+            window.location.href = 'index.html';
+        }
+        // 2. Chặn F12, chuột phải
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Rajdhani:wght=400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="pb-20 overflow-x-hidden">
+
+    <div class="animated-bg" id="animated-bg"></div>
+
+    <div class="main-menu-btn" id="main-menu-btn" onclick="toggleContactMenu()">
+        <i class="fas fa-fire"></i>
+    </div>
+    
+    <div class="contact-menu" id="contact-menu">
+        <a href="https://t.me/maicutevip11" target="_blank" class="contact-item text-[#229ED9]" aria-label="Telegram Admin">
+            <span class="c-label">Hỗ Trợ Telegram</span>
+            <img src="telegram.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111646.png'" alt="Telegram">
+        </a>
+        <a href="#" onclick="showInstructions()" class="contact-item text-[#FF9800]" aria-label="Hướng Dẫn">
+            <span class="c-label">Hướng Dẫn Sử Dụng</span>
+            <i class="fas fa-question-circle text-2xl"></i>
+        </a>
+    </div>
+
+    <header class="fixed top-0 w-full z-40 header-main">
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="logo-large rounded-xl flex items-center justify-center overflow-hidden">
+                    <img src="https://sf-static.upanhlaylink.com/img/image_20251230444ad1f02a97aeb371da9eb9effca248.jpg" 
+                         alt="Logo TDDAI" 
+                         class="custom-logo w-full h-full"
+                         onerror="this.src='https://cdn-icons-png.flaticon.com/512/1006/1006771.png'">
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-white font-rajdhani"></h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="text-xs text-pink-300 uppercase font-rajdhani tracking-wider">SHOP TOOL GAME VIP</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="active:scale-90 transition p-2 rounded-lg bg-gradient-to-r from-pink-900/30 to-orange-900/30" aria-label="Menu">
+                <i class="fa-solid fa-sliders-h text-xl text-pink-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <div id="overlay" class="fixed inset-0 bg-black/80 z-30 hidden transition-opacity duration-300 opacity-0" onclick="toggleSidebar()"></div>
+    
+    <div id="sidebar" class="sidebar fixed top-0 left-[-100%] w-[300px] h-full z-50 flex flex-col p-6">
+        <div class="text-center pb-6 border-b border-pink-900/30">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gradient-to-tr from-pink-500 to-orange-500 p-2 mb-4">
+                <div class="w-full h-full rounded-full bg-[#0f0f1a] flex items-center justify-center">
+                    <i class="fas fa-user text-3xl text-pink-400"></i>
+                </div>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-white font-rajdhani">Tài Khoản</h3>
+            <p class="text-xs text-pink-300 mt-2" id="sidebar-username">Loading...</p>
+            <div class="mt-3">
+                <span class="status-badge bg-gray-500/50" id="account-status-badge">CHƯA KÍCH HOẠT</span>
+            </div>
+        </div>
+        
+        <nav class="flex-1 py-6 space-y-3">
+            <button onclick="showAccountInfo()" class="w-full flex items-center gap-4 p-4 rounded-xl btn-sidebar text-left">
+                <i class="fa-solid fa-user-shield text-pink-400"></i> 
+                <div>
+                    <span class="text-sm font-bold text-white">Thông Tin Tài Khoản</span>
+                    <p class="text-xs text-pink-300">Xem chi tiết tài khoản</p>
+                </div>
+            </button>
+            <button onclick="showHistory()" class="w-full flex items-center gap-4 p-4 rounded-xl btn-sidebar text-left">
+                <i class="fa-solid fa-history text-blue-400"></i> 
+                <div>
+                    <span class="text-sm font-bold text-white">Lịch Sử Kích Hoạt</span>
+                    <p class="text-xs text-blue-300">Nhật ký sử dụng key</p>
+                </div>
+            </button>
+            
+            <button onclick="navigateTo('naptienweb.html')" class="w-full flex items-center gap-4 p-4 rounded-xl btn-sidebar text-left">
+                <i class="fa-solid fa-wallet text-green-400"></i> 
+                <div>
+                    <span class="text-sm font-bold text-white">Nạp tiền</span>
+                    <p class="text-xs text-green-300">Nạp tiền vào tài khoản</p>
+                </div>
+            </button>
+            
+            <button onclick="navigateTo('muakeyweb.html')" class="w-full flex items-center gap-4 p-4 rounded-xl btn-sidebar text-left">
+                <i class="fa-solid fa-tags text-yellow-400"></i> 
+                <div>
+                    <span class="text-sm font-bold text-white">Mua key</span>
+                    <p class="text-xs text-yellow-300">Mua mã kích hoạt </p>
+                </div>
+            </button>
+
+        </nav>
+        
+        <div class="pt-4 border-t border-pink-900/30">
+            <button onclick="showLogoutConfirm()" class="w-full p-4 rounded-xl bg-gradient-to-r from-red-900/30 to-pink-900/30 text-red-300 hover:from-red-900/50 hover:to-pink-900/50 text-center font-bold transition active:scale-95 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-power-off"></i> 
+                <span>ĐĂNG XUẤT</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="pt-24 px-4 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-10 sm:mb-14">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 font-rajdhani">
+                <span class="neon-text">SHOPTOOLGAMEVIP</span> <span class="neon-text-blue">ID.VN</span>
+            </h2>
+            <p class="text-pink-300 text-lg sm:text-xl mb-6 tagline font-rajdhani">HỆ THỐNG KÍCH HOẠT CAO CẤP</p>
+            <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">Trải nghiệm dịch vụ đẳng cấp với hỗ trợ tối ưu cho các nền tảng game hàng đầu</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl mx-auto">
+                <div class="stat-card text-center">
+                    <div class="text-2xl font-bold text-pink-300 font-rajdhani">72%</div>
+                    <div class="text-xs text-pink-200 mt-1">Độ chính xác</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-2xl font-bold text-blue-300 font-rajdhani">24/7</div>
+                    <div class="text-xs text-blue-200 mt-1">Hỗ trợ</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-2xl font-bold text-green-300 font-rajdhani">3+</div>
+                    <div class="text-xs text-green-200 mt-1">Nền tảng</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-2xl font-bold text-yellow-300 font-rajdhani">VIP</div>
+                    <div class="text-xs text-yellow-200 mt-1">Đẳng cấp</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-10">
+            <div class="flex items-center justify-between mb-6 px-2">
+                <h3 class="text-xl font-bold text-white font-rajdhani">
+                    <i class="fas fa-gamepad mr-3 text-pink-400"></i>
+                    HỆ THỐNG HỖ TRỢ
+                </h3>
+                <div class="text-xs text-pink-300 bg-pink-900/30 px-3 py-1 rounded-full">
+                    <span id="game-count">3</span> NỀN TẢNG
+                </div>
+            </div>
+            
+            <div class="game-grid px-2">
+                <div class="game-card cursor-pointer group" data-game-id="sunwin" id="card-sunwin" onclick="handleGameAction('sunwin', 'sun1.html')">
+                    <div class="game-badge" id="badge-sunwin">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 mb-4 relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-orange-600/20 rounded-full"></div>
+                            <img src="sunwin.png" onerror="this.src='https://files.catbox.moe/nn38s5.png'" class="game-logo w-full h-full object-contain relative z-10" alt="Sun Win">
+                        </div>
+                        <h3 class="font-bold text-gray-200 text-sm sm:text-base group-hover:text-pink-300 transition mb-2">SUN WIN</h3>
+                        <p class="text-xs text-gray-400 text-center mb-4"></p>
+                        <button class="btn-core btn-lock mt-auto" id="btn-sunwin">
+                            <i class="fas fa-key mr-2"></i> KÍCH HOẠT
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="game-card cursor-pointer group" data-game-id="hitclub" id="card-hitclub" onclick="handleGameAction('hitclub', 'hit1.html')">
+                    <div class="game-badge" id="badge-hitclub">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 mb-4 relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-red-500/20 to-pink-600/20 rounded-full"></div>
+                            <img src="hitclub.png" onerror="this.src='https://sf-static.upanhlaylink.com/img/image_20251230d3660e2476a272f8a6ab3e28a0b82cb5.jpg'" class="game-logo w-full h-full object-contain relative z-10" alt="Hit Club">
+                        </div>
+                        <h3 class="font-bold text-gray-200 text-sm sm:text-base group-hover:text-red-300 transition mb-2">BACCARAT</h3>
+                        <p class="text-xs text-gray-400 text-center mb-4"></p>
+                        <button class="btn-core btn-lock mt-auto" id="btn-hitclub">
+                            <i class="fas fa-key mr-2"></i> KÍCH HOẠT
+                        </button>
+                    </div>
+                </div>
+
+                <div class="game-card cursor-pointer group" data-game-id="luck8" id="card-luck8" onclick="handleGameAction('luck8', 'luck8-1.html')">
+                    <div class="game-badge" id="badge-luck8">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 mb-4 relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-600/20 rounded-full"></div>
+                            <img src="luck8.png" onerror="this.src='https://i.postimg.cc/dVC4BqqC/e8084232b0a94d9c8c617a93e8de675c8ac6d6be.jpg'" class="game-logo w-full h-full object-contain relative z-10" alt="Luck 8">
+                        </div>
+                        <h3 class="font-bold text-gray-200 text-sm sm:text-base group-hover:text-cyan-300 transition mb-2">LUCK 8</h3>
+                        <p class="text-xs text-gray-400 text-center mb-4"></p>
+                        <button class="btn-core btn-lock mt-auto" id="btn-luck8">
+                            <i class="fas fa-key mr-2"></i> KÍCH HOẠT
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="info-section p-6 mb-12">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center">
+                    <i class="fas fa-star text-xl text-white"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white font-rajdhani">ĐẲNG CẤP MỚI</h3>
+                    <p class="text-sm text-pink-300">Hệ thống cao cấp hàng đầu</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-3">Tính năng đặc biệt</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-star text-yellow-400 mt-1"></i>
+                            <span class="text-gray-300 text-sm">Hệ thống hỗ trợ cao cấp với độ chính xác 72%</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="key-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeKeyModal()"></div>
+        <div class="relative w-full max-w-md modal-box rounded-2xl p-6 mx-4 transform scale-95 transition-all duration-300" id="modal-box">
+            <button onclick="closeKeyModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white p-2 rounded-full hover:bg-pink-900/30">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-key text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white font-rajdhani">KÍCH HOẠT VIP</h3>
+                <p class="text-xs text-pink-300 mt-2">Nhập key cho: <span id="game-name" class="text-pink-400 font-bold">...</span></p>
+            </div>
+            <form onsubmit="handleCheckKey(event)">
+                <input type="hidden" id="modal-game-id">
+                <input type="text" id="license_key" placeholder="..." class="w-full key-input text-center text-white text-base sm:text-lg font-bold p-4 rounded-xl mb-5 outline-none uppercase" required>
+                <button type="submit" id="btn-check" class="btn-core btn-lock text-white py-3.5 text-sm font-rajdhani">
+                    <i class="fas fa-key mr-2"></i> KÍCH HOẠT
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="account-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeAccountInfo()"></div>
+        <div class="relative w-full max-w-sm modal-box rounded-2xl p-5 sm:p-6 mx-4">
+            <div class="flex justify-between items-center mb-6 border-b border-pink-900/30 pb-4">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-shield text-pink-400"></i>
+                    <h3 class="text-lg font-bold text-white font-rajdhani">THÔNG TIN TÀI KHOẢN</h3>
+                </div>
+                <button onclick="closeAccountInfo()" class="text-gray-500 hover:text-white p-2 rounded-full hover:bg-pink-900/30">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between items-center p-3 rounded-lg bg-pink-900/20">
+                    <span class="text-pink-300">Tài khoản:</span>
+                    <span class="text-white font-bold" id="info-username">Loading...</span>
+                </div>
+                <div class="flex justify-between items-center p-3 rounded-lg bg-orange-900/20">
+                    <span class="text-orange-300">Cấp độ:</span>
+                    <span class="text-gray-400 font-bold font-rajdhani" id="account-level">CHƯA KÍCH HOẠT</span>
+                </div>
+                <div class="bg-gradient-to-r from-green-900/30 to-teal-900/30 p-3 rounded-lg">
+                    <p class="text-xs text-green-400 mb-1">Số dư của bạn</p>
+                    <p class="balance-amount text-white" id="user-balance">0 VNĐ</p>
+                </div>
+                <div class="bg-gradient-to-r from-pink-900/30 to-orange-900/30 p-3 rounded-lg">
+                    <p class="text-xs text-pink-400 mb-1">IP người dùng</p>
+                    <p class="text-pink-300 font-mono text-sm" id="user-ip">CHƯA KÍCH HOẠT</p>
+                </div>
+                <div class="bg-gradient-to-r from-pink-900/40 to-orange-900/40 p-4 rounded-lg text-center">
+                    <p class="text-xs text-pink-300 mb-1">Trạng thái tài khoản</p>
+                    <p class="text-red-400 font-bold font-rajdhani text-lg" id="account-status">INACTIVE <i class="fas fa-lock ml-2"></i></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CẤU HÌNH API BACKEND
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxHe9xDk2SXiHhM8A4ElZrkOx5xReGeXrb8BwLl5SBY2XP40gYDZjgISHGfz8yyX8mY/exec'; 
+
+        // Khởi tạo
+        let currentUser = JSON.parse(localStorage.getItem('user'));
+        let isGlobalUnlocked = false;
+
+        // Animated BG
+        const animatedBg = document.getElementById('animated-bg');
+        for(let i=0; i<20; i++) {
+            let d = document.createElement('div'); d.style.left=Math.random()*100+'vw';
+            d.style.animationDuration=(Math.random()*20+20)+'s'; d.style.animationDelay=-Math.random()*25+'s';
+            animatedBg.appendChild(d);
+        }
+
+        // --- CÁC HÀM UI ---
+        function navigateTo(url) { window.location.href = url; }
+        function toggleSidebar() {
+            const s = document.getElementById('sidebar'); const o = document.getElementById('overlay');
+            if(s.style.left === '0px') { s.style.left = '-100%'; o.classList.add('hidden'); setTimeout(()=>o.classList.add('opacity-0'),10); } 
+            else { s.style.left = '0px'; o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); }
+        }
+        function toggleContactMenu() { document.getElementById('contact-menu').classList.toggle('active'); document.getElementById('main-menu-btn').classList.toggle('active'); }
+        function closeAccountInfo() { document.getElementById('account-modal').classList.add('hidden'); }
+        function showHistory() { Swal.fire({ title:'Lịch sử', text: isGlobalUnlocked ? 'Đang kích hoạt VIP' : 'Chưa có lịch sử', background:'#0f0f1a', color:'white' }); }
+        function closeKeyModal() { document.getElementById('key-modal').classList.add('hidden'); }
+        function openKeyModal(name, id) {
+            document.getElementById('game-name').innerText = name; document.getElementById('modal-game-id').value = id;
+            document.getElementById('key-modal').classList.remove('hidden');
+        }
+
+        // --- SYNC DATA VỚI BACKEND (MỖI 5 GIÂY) ---
+        function syncData() {
+            if(!currentUser) return;
+            fetch(`${API_URL}?action=getUserInfo&username=${currentUser.username}`)
+            .then(res => res.json())
+            .then(data => {
+                // 1. Check BAN / IP
+                if(data.status === 'banned' || data.status === 'error') {
+                    localStorage.removeItem('user');
+                    Swal.fire({icon:'error', title:'TÀI KHOẢN BỊ KHÓA', text: data.message || 'Phát hiện truy cập bất thường!', background:'#0f0f1a', color:'white', allowOutsideClick:false}).then(()=> window.location.href='index.html');
+                    return;
+                }
+
+                // 2. Update UI Data
+                document.getElementById('user-balance').innerText = parseInt(data.balance).toLocaleString() + ' VNĐ';
+                document.getElementById('user-ip').innerText = data.ip;
+                document.getElementById('sidebar-username').innerText = data.fullname;
+                document.getElementById('info-username').innerText = data.fullname;
+
+                // 3. Logic VIP
+                if(data.is_vip) {
+                    isGlobalUnlocked = true;
+                    document.getElementById('account-status-badge').innerText = 'VIP MEMBER';
+                    document.getElementById('account-status-badge').classList.replace('bg-gray-500/50', 'bg-gradient-to-r');
+                    document.getElementById('account-status-badge').classList.add('from-blue-500', 'to-cyan-500');
+                    
+                    document.getElementById('account-status').innerHTML = 'ACTIVE <i class="fas fa-check-circle ml-2"></i>';
+                    document.getElementById('account-status').classList.replace('text-red-400', 'text-green-400');
+                    document.getElementById('account-level').innerText = 'VIP CAO CẤP';
+                    document.getElementById('account-level').classList.add('text-green-400');
+                    
+                    unlockAllGames();
+                } else {
+                    isGlobalUnlocked = false;
+                    lockAllGames();
+                }
+            })
+            .catch(err => console.log('Sync err'));
+        }
+
+        // --- GAME ACTIONS ---
+        function handleGameAction(id, link) {
+            if(isGlobalUnlocked) {
+                Swal.fire({title:'ĐANG KẾT NỐI...', timer:1000, didOpen:()=>Swal.showLoading(), background:'#0f0f1a', color:'white', showConfirmButton:false})
+                .then(() => window.location.href = link);
+            } else {
+                openKeyModal(id.toUpperCase(), id);
+            }
+        }
+
+        // Mảng game cần unlock - Đã thêm đầy đủ ID vào đây
+        function unlockAllGames() {
+            const ids = ['sunwin', 'hitclub', '789club', 'go88', 'b52club', 'lc79', 'luck8', 'sumclub', '68gb'];
+            ids.forEach(id => {
+                const card = document.getElementById(`card-${id}`);
+                if(card) {
+                    card.classList.add('unlocked');
+                    const btn = document.getElementById(`btn-${id}`);
+                    if(btn) {
+                        btn.className = 'btn-core btn-unlock mt-auto';
+                        btn.innerHTML = '<i class="fas fa-play-circle mr-2"></i> CHƠI GAME';
+                    }
+                    const badge = document.getElementById(`badge-${id}`);
+                    if(badge) badge.innerHTML = '<i class="fas fa-check"></i>';
+                }
+            });
+        }
+
+        function lockAllGames() {
+            // Logic lock mặc định ban đầu là khóa rồi
+        }
+
+        // --- CHECK KEY ---
+        async function handleCheckKey(e) {
+            e.preventDefault();
+            Swal.fire({icon:'info', title:'THÔNG BÁO', text:'Vui lòng Mua Key để hệ thống tự động kích hoạt!', confirmButtonText:'MUA NGAY', background:'#0f0f1a', color:'white', confirmButtonColor:'#ff3366'})
+            .then((r) => { if(r.isConfirmed) window.location.href = 'muakeyweb.html'; });
+        }
+
+        function showAccountInfo() {
+            document.getElementById('account-modal').classList.remove('hidden');
+            toggleSidebar();
+        }
+
+        function showLogoutConfirm() {
+            Swal.fire({title:'Đăng xuất?', icon:'question', showCancelButton:true, confirmButtonText:'Thoát', background:'#0f0f1a', color:'white', confirmButtonColor:'#ff3366'})
+            .then((r) => { if(r.isConfirmed) { localStorage.removeItem('user'); window.location.href='index.html'; } });
+        }
+
+        // INIT
+        syncData();
+        setInterval(syncData, 5000);
+
+    </script>
+</body>
+</html>

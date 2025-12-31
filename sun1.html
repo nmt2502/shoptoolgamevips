@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SUNWIN - SECURITY CHECK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        /* =========================================
+           CORE VARIABLES & RESET
+           ========================================= */
+        :root { 
+            --primary: #ff3366; 
+            --primary-dark: #ff0040;
+            --secondary: #00d4ff;
+            --accent: #ff9d00;
+            --dark-bg: #0f0f1a; 
+            --card-bg: rgba(25, 20, 45, 0.9);
+            --gradient-primary: linear-gradient(135deg, #ff3366, #ff9d00);
+            --gradient-secondary: linear-gradient(135deg, #00d4ff, #0095c7);
+            --gradient-live: linear-gradient(135deg, #ff0000, #990000);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        html, body { overflow-x: hidden; width: 100%; height: 100%; position: relative; }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: #f0f0ff; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Chặn cuộn khi đang load */
+        }
+
+        /* =========================================
+           SECURITY OVERLAY (Màn hình che)
+           ========================================= */
+        #security-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0f0f1a; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader {
+            width: 50px; height: 50px;
+            border: 5px solid rgba(255, 51, 102, 0.2); border-top: 5px solid #ff3366;
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        .security-text { font-family: 'Rajdhani', sans-serif; color: #ff3366; font-weight: bold; letter-spacing: 2px; animation: pulse 1.5s infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        /* =========================================
+           MAIN WRAPPER (Ẩn nội dung khi chưa Verify)
+           ========================================= */
+        #main-wrapper {
+            opacity: 0; transition: opacity 0.8s ease;
+            display: flex; flex-direction: column; min-height: 100vh;
+            pointer-events: none; width: 100%;
+        }
+
+        /* --- UI CSS GỐC --- */
+        .animated-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .header-main { 
+            background: rgba(15, 15, 26, 0.95); backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255, 51, 102, 0.15); box-shadow: 0 5px 30px rgba(0,0,0,0.4); 
+            border-radius: 12px; padding: 12px 20px; margin-bottom: 25px; 
+            display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;
+        }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-large { width: 50px; height: 50px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.5)); }
+        .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        .back-btn {
+            background: var(--gradient-primary); color: white; border: none; border-radius: 8px; padding: 8px 16px;
+            font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3); display: flex; align-items: center; gap: 6px;
+        }
+        .back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 51, 102, 0.5); }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; z-index: 1; }
+        .page-title { text-align: center; margin-bottom: 30px; font-family: 'Rajdhani', sans-serif; font-size: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        /* GRID & CARD STYLE */
+        .game-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px;
+        }
+        .game-card {
+            background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid rgba(255, 51, 102, 0.15); 
+            border-radius: 16px; position: relative; transition: all 0.4s;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); overflow: hidden; height: 190px; 
+            display: flex; flex-direction: column; cursor: pointer;
+        }
+        .game-card:hover { transform: translateY(-5px) scale(1.02); border-color: rgba(255, 51, 102, 0.4); }
+        .card-content { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 10px; height: 100%; position: relative; z-index: 1; }
+        .game-logo { transition: 0.4s; width: 80px; height: 80px; margin-bottom: 12px; object-fit: contain; }
+        .game-card:hover .game-logo { transform: scale(1.1) rotate(5deg); }
+        .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; text-align: center; margin-top: 5px; color: #f0f0ff; }
+        
+        .game-badge {
+            position: absolute; top: 10px; right: 10px; padding: 2px 8px; min-width: 24px; height: 24px; 
+            border-radius: 12px; background: var(--gradient-primary); display: flex; align-items: center; 
+            justify-content: center; color: white; font-size: 10px; font-weight: bold; z-index: 2; 
+        }
+        .badge-live { background: var(--gradient-live); animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+        .game-card.unlocked .game-badge { background: var(--gradient-secondary); }
+        
+        .footer { text-align: center; margin-top: 30px; padding: 15px; font-size: 0.8rem; color: rgba(240, 240, 255, 0.6); border-top: 1px solid rgba(255, 51, 102, 0.1); }
+        
+        @media (max-width: 640px) { 
+            .game-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .game-card { height: 170px; }
+            .game-logo { width: 70px; height: 70px; }
+        }
+    </style>
+
+    <script>
+        // 1. Check LocalStorage
+        if (!localStorage.getItem('user')) {
+            window.location.replace('index.html');
+        }
+
+        // 2. Chặn F12 & Chuột phải
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+</head>
+<body>
+
+    <div id="security-overlay">
+        <div class="loader"></div>
+        <div class="security-text">SUNWIN VERIFYING...</div>
+        <div id="retry-area" style="margin-top: 20px; display: none;">
+            <p style="color: #fff; font-size: 12px; margin-bottom: 10px;">Mất kết nối server</p>
+            <button onclick="performSecurityCheck()" style="background: #ff3366; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Thử lại</button>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+        <div class="animated-bg" id="animatedBg"></div>
+        
+        <header class="header-main">
+            <div class="logo-container">
+                <img src="https://files.catbox.moe/nn38s5.png" alt="Sun Casino Logo" class="logo-large">
+                <span class="logo-text">SUNWIN</span>
+            </div>
+            <button class="back-btn" id="backButton">
+                <span>←</span>
+                <span>Trang chủ</span>
+            </button>
+        </header>
+        
+        <main class="main-content">
+            <h1 class="page-title">CHỌN GAME</h1>
+            
+            <div class="game-grid">
+                <div class="game-card" id="sicboCard">
+                    <div class="game-badge">NEW</div>
+                    <div class="card-content">
+                        <img src="https://cdn-icons-png.flaticon.com/512/857/857487.png" alt="Sicbo Icon" class="game-logo">
+                        <h3 class="game-title">SICBO</h3>
+                    </div>
+                </div>
+
+                <div class="game-card" id="sicboLiveCard" style="border-color: rgba(255, 0, 0, 0.3);">
+                    <div class="game-badge badge-live">LIVE</div>
+                    <div class="card-content">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4207/4207247.png" alt="Sicbo Live Icon" class="game-logo">
+                        <h3 class="game-title">SICBO LIVE</h3>
+                    </div>
+                </div>
+                
+                <div class="game-card unlocked" id="taixiuCard">
+                    <div class="game-badge">HOT</div>
+                    <div class="card-content">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2011/2011899.png" alt="Tài Xỉu Icon" class="game-logo">
+                        <h3 class="game-title">TÀI XỈU</h3>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>Hệ thống dự đoán AI thế hệ mới</p>
+        </footer>
+    </div>
+    
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyI86X1EPBOt_zB9tlJyVOKuYo8_y7LTvge3t_7w_aJYLUkJk_Q1h_4iZ1ulvtz2wNa/exec';
+
+        // --- HÀM BẢO MẬT & API ---
+        function performSecurityCheck() {
+            document.getElementById('retry-area').style.display = 'none';
+            document.querySelector('.loader').style.display = 'block';
+
+            const userStr = localStorage.getItem('user');
+            if (!userStr) { rejectAccess(); return; }
+
+            const user = JSON.parse(userStr);
+
+            fetch(`${API_URL}?action=getUserInfo&username=${user.username}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Logic check key linh hoạt (true/1)
+                    let isVip = false;
+                    if (data.is_vip === true) isVip = true;
+                    else if (String(data.is_vip).toLowerCase() === 'true') isVip = true;
+                    else if (data.is_vip == 1) isVip = true;
+
+                    if (data.status === 'banned') {
+                        rejectAccess("Tài khoản đã bị khóa!");
+                    } else if (isVip) {
+                        grantAccess();
+                    } else {
+                        rejectAccess("Vui lòng kích hoạt Key SUNWIN!");
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi mạng:", err);
+                    document.querySelector('.loader').style.display = 'none';
+                    document.querySelector('.security-text').innerText = "LỖI KẾT NỐI SERVER";
+                    document.getElementById('retry-area').style.display = 'block';
+                });
+        }
+
+        function grantAccess() {
+            const overlay = document.getElementById('security-overlay');
+            const wrapper = document.getElementById('main-wrapper');
+            
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                wrapper.style.opacity = '1';
+                wrapper.style.pointerEvents = 'auto';
+                createAnimatedBackground();
+            }, 500);
+        }
+
+        function rejectAccess(reason = "Truy cập không hợp lệ!") {
+            Swal.fire({
+                icon: 'error',
+                title: 'ACCESS DENIED',
+                text: reason,
+                background: '#0f0f1a',
+                color: '#fff',
+                confirmButtonColor: '#ff3366',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                timer: 1500
+            }).then(() => {
+                window.location.replace('index.html');
+            });
+            setTimeout(() => window.location.replace('index.html'), 1500);
+        }
+
+        // --- CÁC HÀM UI ---
+        function createAnimatedBackground() {
+            const bgContainer = document.getElementById('animatedBg');
+            bgContainer.innerHTML = '';
+            const colors = ['#ff3366', '#00d4ff', '#ff9d00'];
+            for (let i = 0; i < 20; i++) {
+                const dot = document.createElement('div');
+                dot.style.position = 'absolute';
+                dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+                let s = Math.random() * 6 + 3;
+                dot.style.width = s + 'px'; dot.style.height = s + 'px'; dot.style.borderRadius = '50%';
+                dot.style.left = Math.random() * 100 + '%'; dot.style.top = '100%'; dot.style.opacity = 0.4;
+                dot.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                dot.style.animationDelay = `${Math.random() * 5}s`;
+                bgContainer.appendChild(dot);
+            }
+        }
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.innerText = `@keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.3; } 100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; } }`;
+        document.head.appendChild(styleSheet);
+
+        // --- SỰ KIỆN CLICK (ĐÃ CẬP NHẬT) ---
+        
+        // Back
+        document.getElementById('backButton').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Về trang chủ?', icon: 'question', showCancelButton: true, confirmButtonText: 'Có', cancelButtonText: 'Không',
+                background: '#1a1a2e', color: '#fff', confirmButtonColor: '#ff3366'
+            }).then((result) => { if (result.isConfirmed) window.location.href = 'home.html'; });
+        });
+        
+        // Sicbo Thường
+        document.getElementById('sicboCard').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Sicbo Thường', text: 'Đang kết nối...', icon: 'info', timer: 1000, showConfirmButton: false, background: '#1a1a2e', color: '#fff'
+            }).then(() => window.location.href = 'toolsunwinsicbo.html');
+        });
+
+        // Sicbo LIVE
+        document.getElementById('sicboLiveCard').addEventListener('click', function() {
+            Swal.fire({
+                title: 'SICBO LIVE', text: 'Chuyển đến sảnh Live...', icon: 'success', timer: 1000, showConfirmButton: false, background: '#1a0000', color: '#fff'
+            }).then(() => window.location.href = 'toolsunwinsicbolive.html');
+        });
+        
+        // Tài Xỉu
+        document.getElementById('taixiuCard').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Tài Xỉu', text: 'Đang kết nối...', icon: 'info', timer: 1000, showConfirmButton: false, background: '#1a1a2e', color: '#fff'
+            }).then(() => window.location.href = 'toolsun.html');
+        });
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', performSecurityCheck);
+    </script>
+</body>
+</html>

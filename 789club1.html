@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>789CLUB - SICBO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        /* =========================================
+           CORE VARIABLES & RESET
+           ========================================= */
+        :root { 
+            --primary: #ff3366; 
+            --dark-bg: #0f0f1a; 
+            --card-bg: rgba(25, 20, 45, 0.9);
+            --gradient-primary: linear-gradient(135deg, #ff3366, #ff9d00);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        html, body { overflow-x: hidden; width: 100%; height: 100%; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: #f0f0ff; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Ẩn thanh cuộn khi đang load */
+        }
+
+        /* =========================================
+           SECURITY OVERLAY (Màn hình che)
+           ========================================= */
+        #security-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0f0f1a; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader {
+            width: 50px; height: 50px;
+            border: 5px solid rgba(255, 51, 102, 0.2); border-top: 5px solid #ff3366;
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        .security-text { font-family: 'Rajdhani', sans-serif; color: #ff3366; font-weight: bold; letter-spacing: 2px; animation: pulse 1.5s infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        /* =========================================
+           MAIN CONTENT (Ẩn mặc định)
+           ========================================= */
+        #main-wrapper {
+            opacity: 0; transition: opacity 0.8s ease;
+            display: flex; flex-direction: column; min-height: 100vh; padding: 15px;
+            pointer-events: none;
+        }
+
+        /* UI ELEMENTS */
+        .animated-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .header-main { 
+            background: rgba(15, 15, 26, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 51, 102, 0.15); 
+            box-shadow: 0 5px 30px rgba(0,0,0,0.4); border-radius: 12px; padding: 12px 20px; margin-bottom: 25px; 
+            display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;
+        }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-large { width: 50px; height: 50px; object-fit: contain; }
+        .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        .back-btn {
+            background: var(--gradient-primary); color: white; border: none; border-radius: 8px; padding: 8px 16px;
+            font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;
+        }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
+        .page-title { text-align: center; margin-bottom: 30px; font-family: 'Rajdhani', sans-serif; font-size: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        .game-grid { display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px; }
+        
+        .game-card {
+            background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid rgba(255, 51, 102, 0.15); 
+            border-radius: 20px; position: relative; transition: all 0.4s;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); overflow: hidden; width: 280px; height: 280px; 
+            display: flex; flex-direction: column; cursor: pointer;
+        }
+        .game-card:active { transform: scale(0.97); }
+        .card-content { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; height: 100%; position: relative; z-index: 1; }
+        .game-logo { width: 110px; height: 110px; margin-bottom: 20px; object-fit: contain; }
+        .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: #f0f0ff; }
+        .game-badge { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; z-index: 2; }
+        
+        .footer { text-align: center; margin-top: auto; padding: 15px; font-size: 0.8rem; color: rgba(240, 240, 255, 0.6); border-top: 1px solid rgba(255, 51, 102, 0.1); }
+    </style>
+
+    <script>
+        // 1. Kiểm tra User LocalStorage (Lớp 1)
+        if (!localStorage.getItem('user')) {
+            window.location.replace('index.html');
+        }
+
+        // 2. Chặn F12
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+</head>
+<body>
+
+    <div id="security-overlay">
+        <div class="loader"></div>
+        <div class="security-text">ĐANG XÁC MINH KEY...</div>
+        <div id="retry-area" style="margin-top: 20px; display: none;">
+            <p style="color: #fff; font-size: 12px; margin-bottom: 10px;">Mất kết nối server</p>
+            <button onclick="performSecurityCheck()" style="background: #ff3366; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Thử lại</button>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+        <div class="animated-bg" id="animatedBg"></div>
+        
+        <header class="header-main">
+            <div class="logo-container">
+                <img src="https://i.postimg.cc/nhdgXT6M/images.jpg" alt="789CLUB" class="logo-large">
+                <span class="logo-text">789CLUB</span>
+            </div>
+            <button class="back-btn" id="backButton">
+                <span>←</span>
+                <span>Trang chủ</span>
+            </button>
+        </header>
+        
+        <main class="main-content">
+            <h1 class="page-title">KHU VỰC GAME</h1>
+            <div class="game-grid">
+                <div class="game-card" id="sicboCard">
+                    <div class="game-badge">HOT</div>
+                    <div class="card-content">
+                        <img src="https://cdn-icons-png.flaticon.com/512/857/857487.png" alt="Sicbo Icon" class="game-logo">
+                        <h3 class="game-title">SICBO</h3>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>© 2025 789CLUB SYSTEM</p>
+        </footer>
+    </div>
+    
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyawcn_ZbcX1gK8_ZxyPyJmy0tYjP-cZKbHCvH8mbH0G8KS0AHY7VEz5EGWpqgcYlwAnA/exec';
+
+        // --- HÀM XÁC THỰC (ĐÃ FIX LỖI) ---
+        function performSecurityCheck() {
+            // Ẩn nút retry nếu đang chạy lại
+            document.getElementById('retry-area').style.display = 'none';
+            document.querySelector('.loader').style.display = 'block';
+
+            const userStr = localStorage.getItem('user');
+            if (!userStr) { rejectAccess(); return; }
+
+            const user = JSON.parse(userStr);
+
+            // Fetch dữ liệu mới nhất
+            fetch(`${API_URL}?action=getUserInfo&username=${user.username}`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Check VIP:", data.is_vip); // Để debug (ẩn user không thấy)
+
+                    // --- LOGIC KIỂM TRA MỚI (LINH HOẠT HƠN) ---
+                    // Chấp nhận: true (boolean), "true" (string), "TRUE", 1 (number)
+                    let isVip = false;
+                    if (data.is_vip === true) isVip = true;
+                    else if (String(data.is_vip).toLowerCase() === 'true') isVip = true;
+                    else if (data.is_vip == 1) isVip = true;
+
+                    if (data.status === 'banned') {
+                        rejectAccess("Tài khoản đã bị khóa!");
+                    } 
+                    else if (isVip) {
+                        // ==> THÀNH CÔNG: MỞ CỬA
+                        grantAccess();
+                    } else {
+                        // ==> THẤT BẠI: CHƯA MUA KEY
+                        rejectAccess("Bạn chưa kích hoạt Key cho game này!");
+                    }
+                })
+                .catch(err => {
+                    // Lỗi mạng: Không đá ngay, cho phép thử lại
+                    console.error("Lỗi mạng:", err);
+                    document.querySelector('.loader').style.display = 'none';
+                    document.querySelector('.security-text').innerText = "LỖI KẾT NỐI!";
+                    document.getElementById('retry-area').style.display = 'block';
+                });
+        }
+
+        function grantAccess() {
+            const overlay = document.getElementById('security-overlay');
+            const wrapper = document.getElementById('main-wrapper');
+            
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                wrapper.style.opacity = '1';
+                wrapper.style.pointerEvents = 'auto';
+                createAnimatedBackground();
+            }, 500);
+        }
+
+        function rejectAccess(reason = "Truy cập không hợp lệ!") {
+            Swal.fire({
+                icon: 'error',
+                title: 'KHÔNG THỂ TRUY CẬP',
+                text: reason,
+                background: '#0f0f1a',
+                color: '#fff',
+                confirmButtonColor: '#ff3366',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                timer: 1500 // Chuyển sau 1.5s
+            }).then(() => {
+                window.location.replace('index.html');
+            });
+            // Backup chuyển trang
+            setTimeout(() => window.location.replace('index.html'), 1500);
+        }
+
+        // --- CÁC HÀM UI ---
+        function createAnimatedBackground() {
+            const bgContainer = document.getElementById('animatedBg');
+            // Xóa cũ nếu có để tránh trùng
+            bgContainer.innerHTML = ''; 
+            const colors = ['#ff3366', '#00d4ff', '#ff9d00'];
+            for (let i = 0; i < 20; i++) {
+                const dot = document.createElement('div');
+                dot.style.position = 'absolute';
+                dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+                let s = Math.random() * 6 + 3;
+                dot.style.width = s + 'px'; dot.style.height = s + 'px'; dot.style.borderRadius = '50%';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = '100%';
+                dot.style.opacity = 0.4;
+                dot.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                dot.style.animationDelay = `${Math.random() * 5}s`;
+                bgContainer.appendChild(dot);
+            }
+        }
+        
+        const sheet = document.createElement('style');
+        sheet.innerHTML = `@keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.3; } 100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; } }`;
+        document.head.appendChild(sheet);
+
+        document.getElementById('backButton').addEventListener('click', () => window.location.href = 'home.html');
+        document.getElementById('sicboCard').addEventListener('click', function() {
+            this.style.transform = "scale(0.95)";
+            setTimeout(() => { 
+                this.style.transform = ""; 
+                window.location.href = 'tool789sicbo.html'; 
+            }, 150);
+        });
+        
+        // CHẠY KHI LOAD
+        document.addEventListener('DOMContentLoaded', performSecurityCheck);
+    </script>
+</body>
+</html>

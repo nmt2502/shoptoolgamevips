@@ -1,0 +1,454 @@
+/* =========================================
+   CORE VARIABLES & RESET
+   ========================================= */
+:root { 
+    --primary: #ff3366; 
+    --primary-dark: #ff0040;
+    --secondary: #00d4ff;
+    --accent: #ff9d00;
+    --dark-bg: #0f0f1a; 
+    --card-bg: rgba(25, 20, 45, 0.9);
+    --sidebar-bg: rgba(20, 15, 35, 0.98);
+    --gradient-primary: linear-gradient(135deg, #ff3366, #ff9d00);
+    --gradient-secondary: linear-gradient(135deg, #00d4ff, #0095c7);
+    --gradient-accent: linear-gradient(135deg, #ff9d00, #ff3366);
+    --gradient-dark: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+}
+
+* { 
+    -webkit-tap-highlight-color: transparent; 
+    touch-action: manipulation; 
+}
+
+html, body { 
+    overflow-x: hidden; 
+    width: 100%; 
+    position: relative; 
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: var(--dark-bg); 
+    color: #f0f0ff; 
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 20%),
+        linear-gradient(180deg, rgba(15, 15, 26, 0.95) 0%, rgba(26, 26, 46, 0.8) 100%);
+}
+
+h1, h2, h3, h4, .font-rajdhani { 
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+/* =========================================
+   ANIMATIONS & EFFECTS
+   ========================================= */
+.animated-bg { 
+    position: fixed; 
+    inset: 0; 
+    pointer-events: none; 
+    z-index: 0; 
+    overflow: hidden; 
+}
+
+.animated-bg div { 
+    position: absolute; 
+    background: var(--gradient-primary); 
+    width: 6px; 
+    height: 6px; 
+    border-radius: 50%; 
+    opacity: 0.4; 
+    animation: float linear infinite; 
+}
+
+@keyframes float { 
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
+    10% { opacity: 0.7; } 
+    90% { opacity: 0.3; } 
+    100% { transform: translateY(-20vh) rotate(720deg); opacity: 0; } 
+}
+
+.animate-glow { 
+    animation: glow 3s infinite alternate; 
+}
+
+@keyframes glow { 
+    from { box-shadow: 0 0 10px rgba(255, 51, 102, 0.3), 0 0 20px rgba(255, 157, 0, 0.2); } 
+    to { box-shadow: 0 0 20px rgba(255, 51, 102, 0.6), 0 0 40px rgba(255, 157, 0, 0.4); } 
+}
+
+.neon-text { 
+    text-shadow: 0 0 5px rgba(255, 51, 102, 0.8), 0 0 10px rgba(255, 51, 102, 0.6), 0 0 15px rgba(255, 51, 102, 0.4); 
+}
+
+.neon-text-blue { 
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.8), 0 0 10px rgba(0, 212, 255, 0.6); 
+}
+
+/* =========================================
+   COMPONENTS: GAME CARD
+   ========================================= */
+.game-card {
+    background: var(--card-bg); 
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 51, 102, 0.15); 
+    border-radius: 16px;
+    position: relative; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
+    overflow: hidden; 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column;
+}
+
+.game-card::before {
+    content: ''; 
+    position: absolute; 
+    top: 0; left: 0; right: 0; height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 51, 102, 0.05), transparent); 
+    opacity: 0; 
+    transition: opacity 0.4s ease;
+}
+
+.game-card:hover::before { opacity: 1; }
+
+.game-card::after {
+    content: ''; 
+    position: absolute; 
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: var(--gradient-primary); 
+    border-radius: 18px; 
+    z-index: -1; 
+    opacity: 0; 
+    transition: opacity 0.4s ease;
+}
+
+.game-card:hover::after { opacity: 0.3; }
+
+.game-card:active { transform: scale(0.97); }
+.game-card:hover { 
+    transform: translateY(-5px) scale(1.02); 
+    border-color: rgba(255, 51, 102, 0.4); 
+    box-shadow: 0 15px 40px rgba(255, 51, 102, 0.2); 
+}
+
+.card-content { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 1.5rem 1rem; 
+    height: 100%; 
+    position: relative; 
+    z-index: 1; 
+}
+
+.game-logo { 
+    transition: 0.4s; 
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); 
+}
+
+.game-card:hover .game-logo { transform: scale(1.1) rotate(5deg); }
+
+.game-badge {
+    position: absolute; 
+    top: 12px; right: 12px; 
+    width: 30px; height: 30px; 
+    border-radius: 50%;
+    background: var(--gradient-primary); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: white; 
+    font-size: 12px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
+    z-index: 2; 
+    transition: all 0.3s ease;
+}
+
+.game-card.unlocked .game-badge { background: var(--gradient-secondary); }
+
+/* =========================================
+   COMPONENTS: BUTTONS
+   ========================================= */
+.btn-core {
+    width: 100%; 
+    padding: 14px 20px; 
+    border-radius: 12px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    font-size: 13px;
+    transition: all 0.3s ease; 
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    border: none; 
+    cursor: pointer; 
+    position: relative; 
+    overflow: hidden; 
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.btn-core::before {
+    content: ''; 
+    position: absolute; 
+    top: 0; left: -100%; 
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); 
+    transition: left 0.7s ease;
+}
+
+.btn-core:hover::before { left: 100%; }
+
+.btn-core:active { 
+    transform: scale(0.96); 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3); 
+}
+
+.btn-lock { 
+    background: var(--gradient-primary); 
+    color: white; 
+}
+.btn-lock:hover, .btn-lock:active { box-shadow: 0 0 25px rgba(255, 51, 102, 0.6); }
+
+.btn-unlock { 
+    background: var(--gradient-secondary); 
+    color: white; 
+}
+.btn-unlock:hover, .btn-unlock:active { box-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
+
+.btn-sidebar {
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid rgba(255, 51, 102, 0.1); 
+    color: #ffd6e0; 
+    transition: all 0.3s ease;
+}
+
+.btn-sidebar:hover { 
+    background: rgba(255, 51, 102, 0.15); 
+    border-color: rgba(255, 51, 102, 0.3); 
+    transform: translateX(5px); 
+}
+
+/* =========================================
+   COMPONENTS: SIDEBAR & MODAL
+   ========================================= */
+.sidebar { 
+    background: var(--sidebar-bg); 
+    backdrop-filter: blur(30px); 
+    border-right: 1px solid rgba(255, 51, 102, 0.15); 
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-shadow: 20px 0 60px rgba(0,0,0,0.9); 
+}
+.sidebar::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; right: 0; 
+    width: 3px; height: 100%; 
+    background: var(--gradient-primary); 
+    opacity: 0.5; 
+}
+
+.modal-box { 
+    background: var(--sidebar-bg); 
+    backdrop-filter: blur(30px); 
+    border: 1px solid rgba(255, 51, 102, 0.2); 
+    box-shadow: 0 25px 70px rgba(255, 51, 102, 0.2); 
+}
+.modal-box::before {
+    content: ''; 
+    position: absolute; 
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: var(--gradient-primary); 
+    border-radius: 24px; 
+    z-index: -1; 
+    opacity: 0.2;
+}
+
+/* SweetAlert Customization */
+.swal2-popup { 
+    background: var(--sidebar-bg) !important; 
+    backdrop-filter: blur(30px); 
+    border: 1px solid rgba(255, 51, 102, 0.2) !important; 
+    color: #fff !important; 
+    border-radius: 20px !important; 
+}
+.swal2-confirm { 
+    background: var(--gradient-primary) !important; 
+    border-radius: 10px !important; 
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+/* =========================================
+   COMPONENTS: FLOATING MENU
+   ========================================= */
+.main-menu-btn {
+    position: fixed; 
+    bottom: 25px; right: 25px; 
+    z-index: 100; 
+    width: 65px; height: 65px;
+    border-radius: 50%; 
+    background: var(--gradient-primary); 
+    display: flex; 
+    justify-content: center; align-items: center;
+    cursor: pointer; 
+    box-shadow: 0 10px 30px rgba(255, 51, 102, 0.4); 
+    transition: all 0.3s ease; 
+    font-size: 24px; 
+    color: white;
+}
+.main-menu-btn:active { transform: scale(0.95); }
+.main-menu-btn.active { background: var(--gradient-secondary); transform: rotate(45deg); }
+
+.contact-menu {
+    position: fixed; 
+    bottom: 105px; right: 25px; 
+    z-index: 99; 
+    display: flex; flex-direction: column; gap: 15px;
+    opacity: 0; visibility: hidden; 
+    transform: translateY(20px); 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.contact-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.contact-item { 
+    width: 60px; height: 60px; 
+    border-radius: 50%; 
+    display: flex; justify-content: center; align-items: center; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    position: relative; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+    background: white; 
+    transform: scale(0); 
+    transition: transform 0.3s ease, background 0.3s ease; 
+    overflow: hidden;
+}
+
+.contact-menu.active .contact-item { transform: scale(1); }
+.contact-menu.active .contact-item:nth-child(1) { transition-delay: 0.1s; }
+.contact-menu.active .contact-item:nth-child(2) { transition-delay: 0.2s; }
+
+.contact-item:active { transform: scale(0.9); }
+.contact-item:hover { transform: scale(1.1); }
+.contact-item img { width: 30px; height: 30px; object-fit: contain; z-index: 1; }
+
+.c-label { 
+    position: absolute; right: 70px; 
+    background: rgba(25, 20, 45, 0.95); 
+    color: #ffd6e0; 
+    padding: 8px 16px; 
+    border-radius: 12px; 
+    font-weight: 700; 
+    opacity: 0; visibility: hidden; 
+    transition: all 0.3s ease; 
+    white-space: nowrap; 
+    font-size: 12px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
+    border: 1px solid rgba(255, 51, 102, 0.2); 
+    font-family: 'Rajdhani', sans-serif;
+}
+.contact-item:hover .c-label { opacity: 1; visibility: visible; }
+
+/* =========================================
+   OTHER ELEMENTS
+   ========================================= */
+.header-main { 
+    background: rgba(15, 15, 26, 0.95); 
+    backdrop-filter: blur(20px); 
+    border-bottom: 1px solid rgba(255, 51, 102, 0.15); 
+    box-shadow: 0 5px 30px rgba(0,0,0,0.4); 
+}
+
+.game-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+    gap: 20px; 
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: rgba(25, 20, 45, 0.5); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--gradient-primary); border-radius: 10px; border: 2px solid rgba(15, 15, 26, 0.5); }
+
+.stat-card { 
+    background: rgba(25, 20, 45, 0.7); 
+    border: 1px solid rgba(255, 51, 102, 0.1); 
+    border-radius: 14px; 
+    padding: 1rem; 
+    transition: all 0.3s ease; 
+}
+.stat-card:hover { 
+    border-color: rgba(255, 51, 51, 0.3); 
+    transform: translateY(-5px); 
+}
+
+.custom-logo { 
+    object-fit: contain; 
+    max-width: 100%; max-height: 100%; 
+    filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.5)); 
+}
+
+.info-section { 
+    background: linear-gradient(135deg, rgba(25, 20, 45, 0.8), rgba(35, 30, 55, 0.6)); 
+    border: 1px solid rgba(255, 51, 102, 0.15); 
+    border-radius: 20px; 
+    backdrop-filter: blur(20px); 
+}
+
+.tagline { position: relative; display: inline-block; }
+.tagline::after { 
+    content: ''; 
+    position: absolute; bottom: -5px; left: 0; 
+    width: 100%; height: 2px; 
+    background: var(--gradient-primary); 
+    border-radius: 2px; 
+}
+
+.key-input { 
+    background: rgba(25, 20, 45, 0.7); 
+    border: 1px solid rgba(255, 51, 102, 0.2); 
+    color: white; 
+    letter-spacing: 2px; 
+    font-family: 'Rajdhani', sans-serif; 
+}
+.key-input:focus { 
+    border-color: rgba(255, 51, 102, 0.5); 
+    box-shadow: 0 0 15px rgba(255, 51, 102, 0.2); 
+}
+
+.status-badge { 
+    background: var(--gradient-primary); 
+    color: white; 
+    padding: 4px 12px; 
+    border-radius: 20px; 
+    font-size: 11px; 
+    font-weight: 700; 
+    letter-spacing: 1px; 
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+.loading-pulse { animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+.logo-large { width: 50px; height: 50px; }
+.balance-amount { font-family: 'Rajdhani', sans-serif; font-size: 1.25rem; font-weight: 700; color: #38a169; }
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+@media (max-width: 640px) { 
+    .game-card { border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); padding: 1rem; } 
+    .btn-core { padding: 12px 16px; font-size: 12px; border-radius: 10px; } 
+    .main-menu-btn { width: 60px; height: 60px; bottom: 20px; right: 20px; font-size: 22px; } 
+    .contact-menu { bottom: 95px; right: 20px; } 
+    .contact-item { width: 55px; height: 55px; } 
+    .game-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } 
+    header .text-xl { font-size: 1.1rem; } 
+    main .text-3xl { font-size: 1.8rem; } 
+    .game-logo { width: 70px; height: 70px; }
+    .logo-large { width: 60px; height: 60px; }
+}
+
+@media (min-width: 640px) { 
+    .logo-large { width: 60px; height: 60px; } 
+}

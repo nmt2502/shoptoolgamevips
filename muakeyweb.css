@@ -1,0 +1,286 @@
+/* =========================================
+   CORE VARIABLES & RESET
+   ========================================= */
+:root { 
+    --primary: #ff3366; 
+    --primary-dark: #ff0040;
+    --secondary: #00d4ff;
+    --accent: #ff9d00;
+    --dark-bg: #0f0f1a; 
+    --card-bg: rgba(25, 20, 45, 0.9);
+    --sidebar-bg: rgba(20, 15, 35, 0.98);
+    --gradient-primary: linear-gradient(135deg, #ff3366, #ff9d00);
+    --gradient-secondary: linear-gradient(135deg, #00d4ff, #0095c7);
+    --gradient-accent: linear-gradient(135deg, #ff9d00, #ff3366);
+    --gradient-dark: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+}
+
+* { 
+    -webkit-tap-highlight-color: transparent; 
+    touch-action: manipulation; 
+}
+
+html, body { 
+    overflow-x: hidden; 
+    width: 100%; 
+    position: relative; 
+    overscroll-behavior-y: contain; 
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: var(--dark-bg); 
+    color: #f0f0ff; 
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 20%),
+        linear-gradient(180deg, rgba(15, 15, 26, 0.95) 0%, rgba(26, 26, 46, 0.8) 100%);
+}
+
+h1, h2, h3, h4, .font-rajdhani { 
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+/* =========================================
+   ANIMATIONS & EFFECTS
+   ========================================= */
+.animated-bg { 
+    position: fixed; 
+    inset: 0; 
+    pointer-events: none; 
+    z-index: 0; 
+    overflow: hidden; 
+}
+
+.animated-bg div { 
+    position: absolute; 
+    background: var(--gradient-primary); 
+    width: 6px; 
+    height: 6px; 
+    border-radius: 50%; 
+    opacity: 0.4; 
+    animation: float linear infinite; 
+}
+
+@keyframes float { 
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
+    10% { opacity: 0.7; } 
+    90% { opacity: 0.3; } 
+    100% { transform: translateY(-20vh) rotate(720deg); opacity: 0; } 
+}
+
+.neon-text { 
+    text-shadow: 0 0 5px rgba(255, 51, 102, 0.8), 0 0 10px rgba(255, 51, 102, 0.6), 0 0 15px rgba(255, 51, 102, 0.4); 
+}
+
+.neon-text-blue { 
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.8), 0 0 10px rgba(0, 212, 255, 0.6); 
+}
+
+/* =========================================
+   COMPONENTS: BUTTONS
+   ========================================= */
+.btn-core { 
+    padding: 14px 20px; 
+    border-radius: 12px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    font-size: 13px; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4); 
+    border: none; 
+    cursor: pointer; 
+    position: relative; 
+    overflow: hidden; 
+    font-family: 'Rajdhani', sans-serif; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+}
+
+.btn-core::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; left: -100%; 
+    width: 100%; height: 100%; 
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); 
+    transition: left 0.7s ease; 
+}
+
+.btn-core:hover::before { left: 100%; }
+.btn-core:active { transform: scale(0.96); }
+.btn-core:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.btn-primary { background: var(--gradient-primary); color: white; }
+.btn-primary:hover:not(:disabled) { box-shadow: 0 0 25px rgba(255, 51, 102, 0.6); }
+
+.btn-secondary { background: var(--gradient-secondary); color: white; }
+.btn-secondary:hover:not(:disabled) { box-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
+
+/* =========================================
+   COMPONENTS: CARDS & LAYOUT
+   ========================================= */
+.key-card { 
+    background: var(--card-bg); 
+    backdrop-filter: blur(20px); 
+    border: 1px solid rgba(255, 51, 102, 0.15); 
+    border-radius: 16px; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
+    overflow: hidden; 
+}
+
+.key-card:hover { 
+    transform: translateY(-5px); 
+    border-color: rgba(255, 51, 102, 0.4); 
+    box-shadow: 0 15px 40px rgba(255, 51, 102, 0.2); 
+}
+
+.key-card.popular { position: relative; overflow: hidden; }
+.key-card.popular::before { 
+    content: 'PHỔ BIẾN'; 
+    position: absolute; 
+    top: 15px; right: -30px; 
+    background: var(--gradient-primary); 
+    color: white; 
+    padding: 5px 35px; 
+    font-size: 11px; 
+    font-weight: bold; 
+    transform: rotate(45deg); 
+    font-family: 'Rajdhani', sans-serif; 
+    letter-spacing: 1px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3); 
+}
+
+.balance-card { 
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 157, 0, 0.1)); 
+    backdrop-filter: blur(20px); 
+    border: 1px solid rgba(255, 51, 102, 0.2); 
+    border-radius: 16px; 
+}
+
+.header-main { 
+    background: rgba(15, 15, 26, 0.95); 
+    backdrop-filter: blur(20px); 
+    border-bottom: 1px solid rgba(255, 51, 102, 0.15); 
+    box-shadow: 0 5px 30px rgba(0,0,0,0.4); 
+}
+
+/* =========================================
+   COMPONENTS: MODAL & FEATURES
+   ========================================= */
+.modal-box { 
+    background: var(--sidebar-bg); 
+    backdrop-filter: blur(30px); 
+    border: 1px solid rgba(255, 51, 102, 0.2); 
+    box-shadow: 0 25px 70px rgba(255, 51, 102, 0.2); 
+    border-radius: 20px; 
+}
+
+.modal-box::before { 
+    content: ''; 
+    position: absolute; 
+    top: -2px; left: -2px; right: -2px; bottom: -2px; 
+    background: var(--gradient-primary); 
+    border-radius: 22px; 
+    z-index: -1; 
+    opacity: 0.2; 
+}
+
+.summary-modal { width: 90%; max-width: 500px; margin: auto; }
+.summary-content { max-height: 70vh; overflow-y: auto; }
+
+.feature-list { list-style: none; padding: 0; }
+.feature-list li { 
+    padding: 8px 0; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+.feature-list li:last-child { border-bottom: none; }
+.feature-list li i { color: #ff3366; width: 20px; }
+
+.price-tag { 
+    font-size: 2rem; 
+    font-weight: 800; 
+    font-family: 'Rajdhani', sans-serif; 
+    background: linear-gradient(135deg, #ff3366, #ff9d00); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    background-clip: text; 
+}
+
+.duration-badge { 
+    background: rgba(255, 51, 102, 0.1); 
+    border: 1px solid rgba(255, 51, 102, 0.3); 
+    border-radius: 20px; 
+    padding: 4px 12px; 
+    font-size: 12px; 
+    font-weight: bold; 
+    color: #ff3366; 
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+.summary-mini-text { font-size: 1rem; font-weight: 700; }
+.summary-mini-price { font-size: 1.25rem; font-weight: 800; }
+#discount-code-input { text-transform: uppercase; }
+
+/* =========================================
+   PULL-TO-REFRESH STYLES
+   ========================================= */
+#ptr-loader {
+    position: fixed;
+    top: -70px;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    pointer-events: none;
+    transition: top 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.ptr-content {
+    background: rgba(15, 15, 26, 0.9);
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.ptr-icon {
+    font-size: 18px;
+    color: #ff3366;
+    transition: transform 0.3s;
+}
+
+.ptr-spinner {
+    width: 25px;
+    height: 25px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #ff3366;
+    border-radius: 50%;
+    animation: ptr-spin 0.8s linear infinite;
+    display: none;
+}
+
+@keyframes ptr-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* =========================================
+   MEDIA QUERIES
+   ========================================= */
+@media (max-width: 640px) { 
+    .btn-core { padding: 12px 16px; font-size: 12px; } 
+    .key-card { padding: 15px; } 
+    .summary-modal { width: 95%; margin: 10px; }
+}

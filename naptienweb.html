@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nạp Tiền - SHOPTOOLGAMEVIP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <script>
+        if(!localStorage.getItem('user')) {
+            window.location.href = 'index.html';
+        }
+        // Anti-Console
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="naptienweb.css">
+</head>
+<body class="pb-20 overflow-x-hidden">
+
+    <div class="animated-bg" id="animated-bg"></div>
+
+    <header class="fixed top-0 w-full z-40 header-main">
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='home.html'" class="active:scale-90 transition p-2 rounded-lg">
+                    <i class="fa-solid fa-arrow-left text-xl text-pink-300"></i>
+                </button>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-white font-rajdhani">NẠP TIỀN</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="text-xs text-pink-300 uppercase font-rajdhani tracking-wider">An toàn & Bảo mật</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="showSupport()" class="active:scale-90 transition p-2 rounded-lg bg-gradient-to-r from-pink-900/30 to-orange-900/30" aria-label="Hỗ trợ">
+                <i class="fa-solid fa-headset text-xl text-pink-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-24 px-4 max-w-4xl mx-auto relative z-10">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 font-rajdhani">
+                <span class="neon-text">NẠP TIỀN</span> <span class="neon-text-blue"></span>
+            </h2>
+            <p class="text-pink-300 text-lg mb-6 font-rajdhani">Chọn phương thức thanh toán để tiếp tục</p>
+        </div>
+
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-white mb-4 font-rajdhani">
+                <i class="fas fa-credit-card mr-3 text-pink-400"></i>
+                CHỌN PHƯƠNG THỨC THANH TOÁN
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="payment-card p-6 text-center" onclick="selectPaymentMethod('banking')" id="banking-card">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-university text-2xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-lg text-white mb-2">CHUYỂN KHOẢN NGÂN HÀNG</h4>
+                    <p class="text-sm text-gray-300">Chuyển khoản qua QR Code hoặc số tài khoản</p>
+                    <div class="mt-4">
+                        <span class="text-xs text-green-400 bg-green-900/30 px-3 py-1 rounded-full">KHÔNG MẤT PHÍ</span>
+                    </div>
+                    <button onclick="event.stopPropagation(); showAmountInputModal();" class="btn-core btn-primary mt-4">
+                        <i class="fas fa-arrow-circle-right mr-2"></i> XÁC NHẬN
+                    </button>
+                </div>
+                
+                <div class="payment-card p-6 text-center" onclick="selectPaymentMethod('card')" id="card-card">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-credit-card text-2xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold text-lg text-white mb-2">THẺ CÀO ĐIỆN THOẠI</h4>
+                    <p class="text-sm text-gray-300">Nạp bằng thẻ cào các nhà mạng Việt Nam</p>
+                    <div class="mt-4">
+                        <span class="text-xs text-yellow-400 bg-yellow-900/30 px-3 py-1 rounded-full">TỶ LỆ 1:1</span>
+                    </div>
+                    <button onclick="event.stopPropagation(); showCardProviderModal();" class="btn-core btn-secondary mt-4">
+                        <i class="fas fa-arrow-circle-right mr-2"></i> XÁC NHẬN
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="banking-section" class="hidden"></div>
+        <div id="card-section" class="hidden"></div>
+
+        <div class="text-center mt-8">
+            <button onclick="window.location.href='home.html'" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gray-900/50 text-gray-300 hover:bg-gray-800 transition">
+                <i class="fas fa-arrow-left"></i> QUAY LẠI TRANG CHỦ
+            </button>
+        </div>
+    </main>
+
+    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closePaymentModal()"></div>
+        <div class="relative w-full max-w-md modal-box rounded-2xl mx-auto">
+            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white p-2 rounded-full hover:bg-pink-900/30 active:scale-90 transition z-10">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <div id="modal-content-container" class="p-6">
+                <div id="modal-inner-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 2. CẤU HÌNH API (Thay Link Web App vào đây)
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwFe2N3TF9l5cYXe_-HD7hHrBdE03TiKEWKnWFlsjruV_-M1-NDkufyhCVf6A37Ta6f/exec';
+
+        // Bank Default (Sẽ được cập nhật từ Google Sheet)
+        let BANK_CONFIG = {
+            bankName: "BIDV",
+            accountNumber: "67210000758501",
+            accountName: "NGUYEN THI THUY TRANG",
+            bin: "970418"
+        };
+
+        const CARD_PROVIDERS = [
+            { id: 'viettel', name: 'Viettel', logo: 'https://sf-static.upanhlaylink.com/img/image_20251210996c4096966a17625a0f4adb94357f47.jpg' },
+            { id: 'vinaphone', name: 'Vinaphone', logo: 'https://sf-static.upanhlaylink.com/img/image_20251210cc3006ebb0f61b35d09d898f543edc00.jpg' },
+            { id: 'mobifone', name: 'Mobifone', logo: 'https://sf-static.upanhlaylink.com/img/image_2025121010bb5a6882fed09c2fd58a9f10378013.jpg' },
+            { id: 'zing', name: 'Zing', logo: 'https://sf-static.upanhlaylink.com/img/image_20251210490d9fea71be3ab90d8ba5b2753b7d2d.jpg' }
+        ];
+        const CARD_AMOUNTS = [10000, 20000, 50000, 100000, 200000, 500000];
+        
+        let selectedPaymentMethod = '';
+        let selectedAmount = 0;
+        let selectedProvider = null;
+        let transferContent = '';
+
+        // --- HÀM KHỞI TẠO (Lấy Setting Bank từ Sheet) ---
+        function loadSettings() {
+            fetch(API_URL + '?action=getSettings')
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    BANK_CONFIG.bankName = data.data.bank_name;
+                    BANK_CONFIG.accountNumber = data.data.bank_account;
+                    BANK_CONFIG.accountName = data.data.bank_owner;
+                    BANK_CONFIG.bin = data.data.bank_bin; // Quan trọng để tạo QR
+                }
+            });
+        }
+
+        // --- CÁC HÀM UI ---
+        function initializeAnimatedBg() {
+            const animatedBg = document.getElementById('animated-bg');
+            if(!animatedBg) return;
+            for(let i=0; i<20; i++) {
+                let d = document.createElement('div'); d.style.left=Math.random()*100+'vw'; d.style.animationDuration=(Math.random()*20+20)+'s'; d.style.animationDelay=-Math.random()*25+'s'; animatedBg.appendChild(d);
+            }
+        }
+        function formatCurrency(n) { return n.toLocaleString('vi-VN', {style:'currency', currency:'VND'}); }
+        function showModal() { document.getElementById('payment-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        function renderModal(title, html) {
+            document.getElementById('modal-inner-content').innerHTML = `<div class="text-center mb-6"><h3 class="text-xl font-bold text-white font-rajdhani">${title}</h3></div>${html}`;
+            showModal();
+        }
+
+        // --- LOGIC CHỌN PHƯƠNG THỨC ---
+        function selectPaymentMethod(m) {
+            selectedPaymentMethod = m;
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            if(m === 'banking') document.getElementById('banking-card').classList.add('selected');
+            if(m === 'card') document.getElementById('card-card').classList.add('selected');
+        }
+
+        // --- BANKING FLOW ---
+        function showAmountInputModal() {
+            selectPaymentMethod('banking'); selectedAmount = 0;
+            const content = `
+                <div class="text-center">
+                    <p class="text-pink-300 text-sm mb-4">Nhập số tiền nạp (Tối thiểu 10k)</p>
+                    <input type="number" id="input-bank-amount" class="w-full text-center p-4 text-3xl font-mono rounded-lg bg-gray-900/50 border border-pink-500/30 text-white focus:outline-none focus:border-pink-500" placeholder="0">
+                    <div class="grid grid-cols-3 gap-2 mt-4 mb-6">
+                        ${CARD_AMOUNTS.map(a => `<button onclick="document.getElementById('input-bank-amount').value=${a}" class="btn-core btn-amount">${formatCurrency(a).replace('₫','')}</button>`).join('')}
+                    </div>
+                    <button onclick="confirmBankAmount()" class="btn-core btn-primary mt-4"><i class="fas fa-check-circle mr-2"></i> TIẾP TỤC</button>
+                </div>`;
+            renderModal('CHUYỂN KHOẢN NGÂN HÀNG', content);
+        }
+
+        function confirmBankAmount() {
+            const val = document.getElementById('input-bank-amount').value;
+            if(!val || val < 10000) return Swal.fire({icon:'error', title:'Lỗi', text:'Tối thiểu 10,000đ', background:'#0f0f1a', color:'white'});
+            selectedAmount = parseInt(val);
+            
+            // Tạo nội dung chuyển khoản: DOITIENMAT_(4 số random)
+            const randomNum = Math.floor(Math.random() * 9000) + 1000;
+            transferContent = `NAPTIEN ${randomNum}`; // Theo yêu cầu
+            
+            showBankInfoModal();
+        }
+
+        function showBankInfoModal() {
+            // TẠO QR VIETQR CHUẨN
+            const qrUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bin}-${BANK_CONFIG.accountNumber}-compact.jpg?amount=${selectedAmount}&addInfo=${transferContent}&accountName=${encodeURIComponent(BANK_CONFIG.accountName)}`;
+
+            const content = `
+                <div class="text-center mb-4"><div class="qr-container mb-2 inline-block bg-white p-2 rounded"><img src="${qrUrl}" class="w-full"></div><p class="text-sm text-gray-400">Quét mã để nạp nhanh</p></div>
+                <div class="bank-info mb-4 space-y-2">
+                    <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Ngân hàng:</span><span class="text-white font-bold">${BANK_CONFIG.bankName}</span></div>
+                    <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Chủ TK:</span><span class="text-white font-bold">${BANK_CONFIG.accountName}</span></div>
+                    <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Số TK:</span><span class="text-pink-300 font-mono font-bold">${BANK_CONFIG.accountNumber}</span></div>
+                    <div class="flex justify-between border-b border-white/10 pb-1"><span class="text-gray-400">Số tiền:</span><span class="text-yellow-400 font-bold">${formatCurrency(selectedAmount)}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Nội dung:</span><span class="text-cyan-300 font-mono font-bold">${transferContent}</span></div>
+                </div>
+                <div class="flex gap-2"><button onclick="copyInfo()" class="btn-core btn-secondary">SAO CHÉP</button><button onclick="submitDeposit()" class="btn-core btn-primary">ĐÃ CHUYỂN</button></div>
+            `;
+            renderModal('THÔNG TIN CHUYỂN KHOẢN', content);
+        }
+
+        function copyInfo() {
+            const txt = `${BANK_CONFIG.bankName}\nSTK: ${BANK_CONFIG.accountNumber}\nTiền: ${selectedAmount}\nND: ${transferContent}`;
+            navigator.clipboard.writeText(txt);
+            Swal.fire({icon:'success', title:'Đã sao chép!', toast:true, position:'top-end', showConfirmButton:false, timer:1500, background:'#0f0f1a', color:'white'});
+        }
+
+        // --- CARD FLOW ---
+        function showCardProviderModal() {
+            selectPaymentMethod('card'); selectedProvider = null;
+            const content = `
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    ${CARD_PROVIDERS.map(p => `<div class="payment-card p-2 text-center" onclick="selectCardProvider('${p.id}')" id="provider-${p.id}"><img src="${p.logo}" class="w-8 h-8 mx-auto object-contain"><p class="text-[10px] mt-1">${p.name}</p></div>`).join('')}
+                </div>
+                <button onclick="confirmCardProvider()" class="btn-core btn-secondary opacity-50" id="btn-card-next" disabled>TIẾP TỤC</button>
+            `;
+            renderModal('CHỌN NHÀ MẠNG', content);
+        }
+
+        function selectCardProvider(id) {
+            selectedProvider = CARD_PROVIDERS.find(p => p.id === id);
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`provider-${id}`).classList.add('selected');
+            const btn = document.getElementById('btn-card-next'); btn.disabled = false; btn.classList.remove('opacity-50');
+        }
+
+        function confirmCardProvider() {
+            closePaymentModal();
+            const content = `
+                <div class="space-y-3">
+                    <p class="text-center text-pink-300 mb-2">Nhà mạng: <b>${selectedProvider.name}</b></p>
+                    <div><label class="text-sm text-gray-400">Mệnh giá</label><select id="card-amount" class="w-full bg-gray-800 text-white p-2 rounded mt-1 border border-gray-600">${CARD_AMOUNTS.map(a => `<option value="${a}">${formatCurrency(a)}</option>`).join('')}</select></div>
+                    <div><label class="text-sm text-gray-400">Mã thẻ</label><input type="number" id="card-code" class="w-full bg-gray-800 text-white p-2 rounded mt-1 border border-gray-600" placeholder="Mã thẻ"></div>
+                    <div><label class="text-sm text-gray-400">Serial</label><input type="number" id="card-serial" class="w-full bg-gray-800 text-white p-2 rounded mt-1 border border-gray-600" placeholder="Serial"></div>
+                    <button onclick="submitCardDeposit()" class="btn-core btn-primary mt-2">NẠP THẺ</button>
+                </div>
+            `;
+            renderModal('NHẬP THÔNG TIN THẺ', content);
+        }
+
+        // --- SUBMIT TO SERVER ---
+        function submitDeposit() {
+            closePaymentModal();
+            Swal.fire({title:'ĐANG GỬI...', didOpen:()=>Swal.showLoading(), background:'#0f0f1a', color:'white'});
+            
+            const user = JSON.parse(localStorage.getItem('user'));
+            const formData = new FormData();
+            formData.append('action', 'deposit');
+            formData.append('username', user.username);
+            formData.append('amount', selectedAmount);
+            formData.append('method', 'banking');
+            formData.append('content', transferContent);
+
+            fetch(API_URL, {method:'POST', body:formData}).then(r=>r.json()).then(data=>{
+                Swal.fire({icon:'success', title:'GỬI YÊU CẦU THÀNH CÔNG', text:'Vui lòng đợi Admin duyệt trong 3-5 phút!', background:'#0f0f1a', color:'white'});
+            });
+        }
+
+        function submitCardDeposit() {
+            const amount = document.getElementById('card-amount').value;
+            const code = document.getElementById('card-code').value;
+            const serial = document.getElementById('card-serial').value;
+            if(!code || !serial) return Swal.fire('Lỗi', 'Nhập đủ thông tin!', 'error');
+
+            closePaymentModal();
+            Swal.fire({title:'ĐANG GỬI...', didOpen:()=>Swal.showLoading(), background:'#0f0f1a', color:'white'});
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            const content = `THECAO_${selectedProvider.name}_${amount}_${code}_${serial}`;
+            
+            const formData = new FormData();
+            formData.append('action', 'deposit');
+            formData.append('username', user.username);
+            formData.append('amount', amount);
+            formData.append('method', 'card');
+            formData.append('content', content);
+
+            fetch(API_URL, {method:'POST', body:formData}).then(r=>r.json()).then(data=>{
+                Swal.fire({icon:'success', title:'GỬI THẺ THÀNH CÔNG', text:'Admin sẽ duyệt thẻ trong ít phút!', background:'#0f0f1a', color:'white'});
+            });
+        }
+
+        function showSupport() {
+            Swal.fire({icon:'info', title:'HỖ TRỢ', html:'Liên hệ Telegram: <a href="https://t.me/maicutevip11" class="text-blue-400">@maicutevip11</a>', background:'#0f0f1a', color:'white'});
+        }
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimatedBg();
+            loadSettings(); // Gọi API lấy Bank Info
+        });
+
+    </script>
+</body>
+</html>
